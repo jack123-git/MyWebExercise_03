@@ -3,16 +3,34 @@
 <PageTitle>Home</PageTitle>
 
 <MudText Typo="Typo.h3" GutterBottom="true">Hello, world!</MudText>
-<MudText Class="mb-8">Welcome to your new app, powered by MudBlazor and the .NET 10 Template!</MudText>
+
+<MudPaper Style="width:96%;height:200px;" Class="d-flex flex-wrap justify-center align-content-center gap-8">
+        <MudButton Variant="Variant.Filled">Default</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary">Primary</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary">Secondary</MudButton>
+        <MudButton Variant="Variant.Filled" Disabled="true">Disabled</MudButton>
+</MudPaper>
+
+<MudPaper Class="d-flex align-content-end flex-wrap flex-grow-1 gap-4" MaxWidth="508px" Height="320px" Elevation="0">
+    <MudPaper Class="mud-theme-primary" Width="128px" Height="64px" />
+    <MudPaper Class="mud-theme-primary" Width="128px" Height="64px" />
+    <MudPaper Class="mud-theme-primary" Width="128px" Height="64px" />
+    <MudPaper Class="mud-theme-primary" Width="128px" Height="64px" />
+    <MudPaper Class="mud-theme-primary" Width="128px" Height="64px" />
+</MudPaper>
+
+@* <MudText Class="mb-8">Welcome to your new app, powered by MudBlazor and the .NET 10 Template!</MudText>
+
+
 
 <MudAlert Severity="Severity.Normal" ContentAlignment="HorizontalAlignment.Start">
     You can find documentation and examples on our website here:
     <MudLink Href="https://mudblazor.com" Target="_blank" Typo="Typo.body2" Color="Color.Primary">
         <b>www.mudblazor.com</b>
     </MudLink>
-</MudAlert>
+</MudAlert> *@
 
-<br />
+@* <br />
 <MudText Typo="Typo.h5" GutterBottom="true">Interactivity in this Template</MudText>
 <br />
 <MudText Typo="Typo.body2">
@@ -56,4 +74,4 @@
     <MudLink Href="https://github.com/dotnet/aspnetcore/issues/51468#issue-1950424116" Target="_blank" Typo="Typo.body2" Color="Color.Primary">
         More details
     </MudLink>
-</MudText>
+</MudText> *@

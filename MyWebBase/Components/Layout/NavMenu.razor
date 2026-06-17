@@ -1,10 +1,40 @@
 ﻿
-<MudNavMenu>
+@* <MudNavMenu>
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
     <MudNavLink Href="counter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Counter</MudNavLink>
     
     <MudNavLink Href="weather" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Weather</MudNavLink>
 
+</MudNavMenu> *@
+
+<MudNavMenu>
+    <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" Href="/">首頁</MudNavLink>
+
+    <!-- 只有包含 Admin 角色的帳號可見 -->
+    <AuthorizeView Roles="Admin">
+        <Authorized>
+            <MudNavGroup Title="系統管理" Icon="@Icons.Material.Filled.Settings" Expanded="false">
+                <MudNavLink Icon="@Icons.Material.Filled.People" Href="/admin/users">使用者管理</MudNavLink>
+                <MudNavLink Icon="@Icons.Material.Filled.Security" Href="/admin/roles">權限設定</MudNavLink>
+            </MudNavGroup>
+        </Authorized>
+    </AuthorizeView>
+
+    <!-- 包含 Manager 或 Admin 角色的帳號皆可見 -->
+    <AuthorizeView Roles="Admin,Manager">
+        <Authorized>
+            <MudNavGroup Title="業務報表" Icon="@Icons.Material.Filled.BarChart" Expanded="false">
+                <MudNavLink Icon="@Icons.Material.Filled.Assignment" Href="/reports/sales">銷售績效</MudNavLink>
+            </MudNavGroup>
+        </Authorized>
+    </AuthorizeView>
+
+    <!-- 任何已登入的帳號（不限角色）皆可見 -->
+    <AuthorizeView>
+        <Authorized>
+            <MudNavLink Icon="@Icons.Material.Filled.Person" Href="/profile">個人資料</MudNavLink>
+        </Authorized>
+    </AuthorizeView>
 </MudNavMenu>
 
 

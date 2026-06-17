@@ -1,0 +1,45 @@
+﻿@page "/login"
+@inject UserService UserService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavManager
+@inject ISnackbar Snackbar
+
+<div class="d-flex align-center justify-center" style="height: 80vh;">
+    <MudPaper Elevation="4" Class="pa-8" Width="400px">
+        <MudText Typo="Typo.h5" Class="mb-4" Align="Align.Center">系統登入</MudText>
+        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+            <MudTextField @bind-Value="loginModel.Username" Label="帳號" Variant="Variant.Outlined" Class="mb-4" Required="true" />
+            <MudTextField @bind-Value="loginModel.Password" Label="密碼" InputType="InputType.Password" Variant="Variant.Outlined" Class="mb-6" Required="true" />
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Size="Size.Large">
+                登入
+            </MudButton>
+        </EditForm>
+    </MudPaper>
+</div>
+
+@code {
+    private LoginInput loginModel = new LoginInput();
+
+    private async Task HandleLogin()
+    {
+        var (user, roles) = await UserService.AuthenticateAsync(loginModel.Username, loginModel.Password);
+
+        if (user != null)
+        {
+            var customProvider = (CustomAuthStateProvider)AuthStateProvider;
+            customProvider.MarkUserAsAuthenticated(user.Username, roles);
+            Snackbar.Add("登入成功！", Severity.Success);
+            NavManager.NavigateTo("/");
+        }
+        else
+        {
+            Snackbar.Add("帳號或密碼錯誤", Severity.Error);
+        }
+    }
+
+    public class LoginInput
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+}

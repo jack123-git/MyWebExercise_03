@@ -1,4 +1,8 @@
 ﻿@inherits LayoutComponentBase
+@inject IJSRuntime JSRuntime
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavManager
+@inject ISnackbar Snackbar
 
 <MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
 <MudPopoverProvider />
@@ -98,6 +102,37 @@
         true => Icons.Material.Rounded.AutoMode,
         false => Icons.Material.Outlined.DarkMode,
     };
+}
+
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // 初始化閒置偵測，設定 15 分鐘 (900,000 毫秒) 未操作自動登出
+            var dotNetObjRef = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("timeOutDetector.startTimer", dotNetObjRef, 900000);
+            // await JSRuntime.InvokeVoidAsync("timeOutDetector.startTimer", dotNetObjRef, 30000);
+        }
+    }
+
+    [JSInvokable]
+    public void LogoutUserDueToInactivity()
+    {
+        var authState = AuthStateProvider.GetAuthenticationStateAsync().Result;
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            Logout();
+            Snackbar.Add("您因一段時間未操作，系統已自動登出安全連線。", Severity.Warning);
+        }
+    }
+
+    private void Logout()
+    {
+        ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsLoggedOut();
+        NavManager.NavigateTo("/login");
+    }
 }
 
 

@@ -19,6 +19,33 @@
     <ReconnectModal />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
     <script src="@Assets["_content/MudBlazor/MudBlazor.min.js"]"></script>
+
+    <script>
+        window.timeOutDetector = {
+            dotNetReference: null,
+            timer: null,
+            startTimer: function (dotNetRef, timeoutMs) {
+                this.dotNetReference = dotNetRef;
+                this.resetTimer(timeoutMs);
+
+                // 監聽常見的操作事件
+                const events = ['mousemove', 'keypress', 'mousedown', 'touchstart'];
+
+                events.forEach(evt => {
+                        window.addEventListener(evt, () => this.resetTimer(timeoutMs), true);
+                    });
+                },
+                resetTimer: function (timeoutMs) {
+                clearTimeout(this.timer);
+                this.timer = setTimeout(() => {
+                    // 觸發 Blazor 的強制登出方法
+                    if (this.dotNetReference) {
+                    this.dotNetReference.invokeMethodAsync('LogoutUserDueToInactivity');
+                    }
+                }, timeoutMs);
+            }
+        };
+    </script>
 </body>
 
 </html>

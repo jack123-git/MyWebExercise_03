@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="CommonLibrary/CommonLibrary.csproj" Id="3937659e-7482-42de-998d-97df5c6846d9" />
   <Project Path="MyWebBase/MyWebBase.csproj" />
 </Solution>

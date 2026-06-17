@@ -1,3 +1,7 @@
+using CommonLibrary.Provider;
+using CommonLibrary.Data;
+using CommonLibrary.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
 using MyWebBase.Components;
 
@@ -9,6 +13,14 @@ builder.Services.AddMudServices();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+// 註冊 Blazor 驗證核心
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddCascadingAuthenticationState();
+
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<MenuService>();
 
 var app = builder.Build();
 
