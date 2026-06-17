@@ -1,9 +1,6 @@
 ﻿using CommonLibrary.Data;
 using CommonLibrary.Models;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CommonLibrary.Services
 {

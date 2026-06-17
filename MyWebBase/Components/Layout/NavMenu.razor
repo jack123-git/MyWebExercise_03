@@ -1,13 +1,11 @@
-﻿
+﻿@inject MenuService MenuService
+@inject AuthenticationStateProvider AuthStateProvider
+@using System.Security.Claims
+@using MyWebBase.Components.Shared
+@implements IDisposable
+@rendermode InteractiveServer
+
 @* <MudNavMenu>
-    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-    <MudNavLink Href="counter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Counter</MudNavLink>
-    
-    <MudNavLink Href="weather" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Weather</MudNavLink>
-
-</MudNavMenu> *@
-
-<MudNavMenu>
     <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" Href="/">首頁</MudNavLink>
 
     <!-- 只有包含 Admin 角色的帳號可見 -->
@@ -36,5 +34,87 @@
         </Authorized>
     </AuthorizeView>
 </MudNavMenu>
+ *@
+
+<MudNavMenu>
+    @if (rootMenuList == null)
+    {
+        <MudText Class="pa-4" Typo="Typo.body2">請先登入系統...</MudText>
+    }
+    else if (!rootMenuList.Any())
+    {
+        <MudText Class="pa-4" Typo="Typo.body2" Color="Color.Error">此帳號未設定任何選單權限</MudText>
+    }
+    else
+    {
+        @foreach (var rootMenu in rootMenuList)
+        {
+            <NavMenuItem Item="@rootMenu" />
+        }
+    }
+</MudNavMenu>
 
 
+@code {
+    // // 加入此全域級聯參數，Blazor 只要偵測到 Auth 狀態改變，就會自動強制觸發本元件重繪
+    // [CascadingParameter]
+    // private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+    private List<MenuNavItem> rootMenuList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // 1. 初始化時先撈取一次選單（未登入時會得到空清單或 null）
+        await LoadMenuDataAsync();
+
+        // 2. 訂閱狀態改變事件
+        var customProvider = AuthStateProvider as CustomAuthStateProvider;
+        if (customProvider != null)
+        {
+            customProvider.OnNotify += RefreshMenu;
+        }
+    }
+
+    private async Task LoadMenuDataAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var roles = user.Claims
+                            .Where(c => c.Type == ClaimTypes.Role)
+                            .Select(c => c.Value)
+                            .ToList();
+
+            rootMenuList = await MenuService.GetDynamicMenuAsync(roles);
+        }
+        else
+        {
+            // 未登入時，清空選單
+            rootMenuList = null;
+        }
+    }
+
+    // 當事件觸發時執行的回呼函式
+    private async void RefreshMenu()
+    {
+        // 由於事件可能是從非 UI 執行緒觸發，使用 InvokeAsync 確保在 Blazor UI 執行緒執行
+        await InvokeAsync(async () =>
+        {
+            await LoadMenuDataAsync();
+            StateHasChanged(); // 強制重新渲染元件
+        });
+    }
+
+    // 3. 元件銷毀時解除訂閱，避免記憶體洩漏
+    public void Dispose()
+    {
+        var customProvider = AuthStateProvider as CustomAuthStateProvider;
+        if (customProvider != null)
+        {
+            customProvider.OnNotify -= RefreshMenu;
+        }
+    }
+
+}

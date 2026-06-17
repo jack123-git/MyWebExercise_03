@@ -1,0 +1,40 @@
+﻿@using System.Reflection
+
+@* 檢查目前節點是否有子節點 *@
+@if (Item.Children.Any())
+{
+    @* 有子節點，渲染為群組，並在內部遞迴呼叫自己 *@
+    <MudNavGroup Title="@Item.Title" Icon="@GetMudIcon(Item.Icon)" Expanded="false">
+        @foreach (var child in Item.Children)
+        {
+            <NavMenuItem Item="@child" />
+        }
+    </MudNavGroup>
+}
+else
+{
+    @* 沒有子節點，代表是末端功能鈕 *@
+    <MudNavLink Icon="@GetMudIcon(Item.Icon)" Href="@Item.TargetUrl" Match="NavLinkMatch.Prefix">
+        @Item.Title
+    </MudNavLink>
+}
+
+@code {
+    [Parameter]
+    public MenuNavItem Item { get; set; }
+
+    // 取得Icon 字串
+    private string GetMudIcon(string iconName)
+    {
+        if (string.IsNullOrEmpty(iconName)) return Icons.Material.Filled.Menu;
+
+        Type type = typeof(Icons.Material.Filled);
+        var field = type.GetField(iconName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Static);
+        if (field != null)
+        {
+            return field.GetValue(null) as string;
+        }
+
+        return Icons.Material.Filled.Menu;
+    }
+}
