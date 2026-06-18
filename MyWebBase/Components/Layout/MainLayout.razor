@@ -13,8 +13,25 @@
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudText Typo="Typo.h5" Class="ml-3">Application</MudText>
         <MudSpacer />
-        <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@DarkModeToggle" />
-        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+        <AuthorizeView>
+            <Authorized>
+                <span>您好，@context.User.Identity.Name </span>
+                <MudTooltip Text="登出">
+                    <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" OnClick="@Logout" />
+                </MudTooltip>
+                <MudTooltip Text="切換主題">
+                    <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@DarkModeToggle" />
+                </MudTooltip>
+                <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+            </Authorized>
+
+            <NotAuthorized>
+                <MudTooltip Text="登入">
+                    <MudIconButton Icon="@Icons.Material.Filled.Login" Color="Color.Inherit" OnClick="@Login" />
+                </MudTooltip>
+            </NotAuthorized>
+        </AuthorizeView>
+
     </MudAppBar>
     <MudDrawer id="nav-drawer" @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <NavMenu />
@@ -32,7 +49,7 @@
 </div>
 
 @code {
-    private bool _drawerOpen = true;
+    private bool _drawerOpen = false;
     private bool _isDarkMode = true;
     private MudTheme? _theme = null;
 
@@ -112,8 +129,8 @@
         {
             // 初始化閒置偵測，設定 15 分鐘 (900,000 毫秒) 未操作自動登出
             var dotNetObjRef = DotNetObjectReference.Create(this);
-            await JSRuntime.InvokeVoidAsync("timeOutDetector.startTimer", dotNetObjRef, 900000);
-            // await JSRuntime.InvokeVoidAsync("timeOutDetector.startTimer", dotNetObjRef, 30000);
+            // await JSRuntime.InvokeVoidAsync("timeOutDetector.startTimer", dotNetObjRef, 900000);
+            await JSRuntime.InvokeVoidAsync("timeOutDetector.startTimer", dotNetObjRef, 10000);
         }
     }
 
@@ -128,10 +145,15 @@
         }
     }
 
+    private void Login()
+    {
+        NavManager.NavigateTo("/account/login");
+    }
+
     private void Logout()
     {
         ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsLoggedOut();
-        NavManager.NavigateTo("/login");
+        NavManager.NavigateTo("/account/login");
     }
 }
 

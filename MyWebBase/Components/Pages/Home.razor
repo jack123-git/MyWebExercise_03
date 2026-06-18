@@ -1,4 +1,6 @@
 ﻿@page "/"
+@inject NavigationManager navigationManager
+@inject AuthenticationStateProvider authenticationStateProvider
 
 <PageTitle>Home</PageTitle>
 
@@ -75,3 +77,22 @@
         More details
     </MudLink>
 </MudText> *@
+
+@code {
+    private string EditUserAccount { get; set; } = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (!user.Identity.IsAuthenticated)
+        {
+            navigationManager.NavigateTo("/account/login", false);
+        }
+        else
+        {
+            var account = user.Identity.Name;
+            EditUserAccount = user.Identity.Name;
+        }
+    }
+}
