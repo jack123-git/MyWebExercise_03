@@ -31,6 +31,7 @@ namespace CommonLibrary.Data
             //connection.Close();
             //return (user, roles);
 
+            // for Test
             var user = new UserDto
             {
                 UserId = 1,
@@ -76,11 +77,19 @@ namespace CommonLibrary.Data
                 new MenuNavItem { MenuId = 4, Title = "權限設定", Icon = "Security", TargetUrl = "/admin/roles", ParentId = 1 }
             };
 
+            var child3 = new List<MenuNavItem>
+            {
+                new MenuNavItem { MenuId = 7, Title = "業務報表_2", Icon = "BarChart", TargetUrl = "/reports/sales3", ParentId = 6 },
+                new MenuNavItem { MenuId = 8, Title = "銷售績效_2", Icon = "Assignment", TargetUrl = "/reports/sales2", ParentId = 6 }
+            };
+
             var child2 = new List<MenuNavItem>
             {
                 new MenuNavItem { MenuId = 5, Title = "業務報表", Icon = "BarChart", TargetUrl = "/reports/sales", ParentId = 2 },
-                new MenuNavItem { MenuId = 6, Title = "銷售績效", Icon = "Assignment", TargetUrl = "/reports/sales", ParentId = 2 }
+                new MenuNavItem { MenuId = 6, Title = "銷售績效", Icon = "Assignment", TargetUrl = "/reports/sales", ParentId = 2, Children = child3 }
             };
+
+
 
             var rootMenus = new List<MenuNavItem>
             {
