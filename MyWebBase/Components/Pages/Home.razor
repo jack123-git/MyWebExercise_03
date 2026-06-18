@@ -79,7 +79,8 @@
 </MudText> *@
 
 @code {
-    private string EditUserAccount { get; set; } = "";
+    private string username { get; set; } = "Guest";
+    private string account { get; set; } = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -91,8 +92,8 @@
         }
         else
         {
-            var account = user.Identity.Name;
-            EditUserAccount = user.Identity.Name;
+            account = user.Identity.Name;
+            username = user.Identity.Name;
         }
     }
 }

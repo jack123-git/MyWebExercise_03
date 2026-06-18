@@ -46,6 +46,15 @@
             }
         };
     </script>
+
+    <script>
+        window.preventBack = function () {
+            history.pushState(null, null, location.href);
+            window.onpopstate = function () {
+                history.go(1); // 強制停留在當前頁面
+            };
+        };
+    </script>
 </body>
 
 </html>
